@@ -1,5 +1,6 @@
 package cliente;
 
+import java.util.Random;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -22,16 +23,18 @@ public class Canvas extends JPanel implements Runnable {
 	private boolean jogando;
 	private Janela janela;
 	private Thread gameloop = new Thread(this);
-	private String scenePath = "Data/background.jpg";
+	private String scenePath = "Data/backaground.jpg";
 	
 	private int h = 0;
 	private int w = 0;
 	
-	public Canvas(int h, int w, Janela janela) {
+	private int ponto_borda_offset = 20;
+
+	public Canvas(Janela janela) {
 		jogando = false;
 		this.janela = janela;
-		this.h = h;
-		this.w = w;
+		this.h = janela.getAlturaAtual();
+		this.w = janela.getLarguraAtual();
 		criarTabuleiro();
 		
 	
@@ -47,17 +50,24 @@ public class Canvas extends JPanel implements Runnable {
 		gameloop.start();
 	}
 		
+	public void atualizaDimensoes(){
+		this.h = this.janela.getAlturaAtual();
+		this.w = this.janela.getLarguraAtual();
+	}
 	public void criarTabuleiro() {
 		/**
 		 * Cria linhas e pontos do tabuleiro
 		 */
-		int i;
 
+		atualizaDimensoes();
 		// valores para gerar posicao de linha e pontos
-		int centro_w = this.w / 2;  // centro
+		int centro_w = this.h / 2;  // centro
 		int desloca_w = (this.w/100 * 20); // meio deslocado de 20% da tela
 		int centro_h = this.h / 2;
 		int desloca_h = (this.h/100 * 20); // meio deslocado de 20% da tela
+
+		int tam_ponto = (this.w/100 * 5);
+		int eixo_ponto = tam_ponto/2;
 
 		// /\
 		linhas[0][0] = centro_w; // x0
@@ -70,26 +80,55 @@ public class Canvas extends JPanel implements Runnable {
 		linhas[1][3] = centro_h; // y1
 		
 		// - --
-		linhas[2][0] = centro_w; // x0
-		linhas[2][1] = centro_h - desloca_h * 2; // y0
-		linhas[2][2] = centro_w + desloca_w; // x1
-		linhas[2][3] = centro_h; // y1
-		linhas[3][0] = centro_w; // x0
-		linhas[3][1] = centro_h - desloca_h * 2; // y0
+		linhas[2][0] = centro_w + desloca_w/2; // x0
+		linhas[2][1] = centro_h - desloca_h; // y0
+		linhas[2][2] = centro_w - desloca_w/2; // x1
+		linhas[2][3] = centro_h - desloca_h; // y1
+		linhas[3][0] = centro_w + desloca_w; // x0
+		linhas[3][1] = centro_h; // y0
 		linhas[3][2] = centro_w - desloca_w; // x1
 		linhas[3][3] = centro_h; // y1
 
+		// |
+		linhas[4][0] = centro_w; // x0
+		linhas[4][1] = centro_h; // y0
+		linhas[4][2] = centro_w; // x1
+		linhas[4][3] = centro_h - desloca_h * 2; // y1
 
+		// .
+		pontos[0][0] = centro_w - eixo_ponto;
+		pontos[0][1] = centro_h - (desloca_h*2) - eixo_ponto;
+		pontos[0][2] = tam_ponto;
+		pontos[0][3] = tam_ponto;	
+		
+		// . . .
+		pontos[1][0] = centro_w - (desloca_w/2) - eixo_ponto;
+		pontos[1][1] = centro_h - desloca_h - eixo_ponto;
+		pontos[1][2] = tam_ponto;
+		pontos[1][3] = tam_ponto;	
+		pontos[2][0] = centro_w - eixo_ponto;
+		pontos[2][1] = centro_h - desloca_h - eixo_ponto;
+		pontos[2][2] = tam_ponto;
+		pontos[2][3] = tam_ponto;	
+		pontos[3][0] = centro_w + (desloca_w/2) - eixo_ponto;
+		pontos[3][1] = centro_h - desloca_h - eixo_ponto;
+		pontos[3][2] = tam_ponto;
+		pontos[3][3] = tam_ponto;	
 
+		// . . .
+		pontos[4][0] = centro_w - desloca_w - eixo_ponto;
+		pontos[4][1] = centro_h - eixo_ponto;
+		pontos[4][2] = tam_ponto;
+		pontos[4][3] = tam_ponto;	
+		pontos[5][0] = centro_w - eixo_ponto;
+		pontos[5][1] = centro_h - eixo_ponto;
+		pontos[5][2] = tam_ponto;
+		pontos[5][3] = tam_ponto;
+		pontos[6][0] = centro_w + desloca_w - eixo_ponto;
+		pontos[6][1] = centro_h - eixo_ponto;
+		pontos[6][2] = tam_ponto;
+		pontos[6][3] = tam_ponto;
 
-		// for(i = 0; i < 7; i++) {
-		// 	// define a posicao de cada ponto desenhada na janela
-		// 	pontos[i][0] = 50 + ((i+1) * 20);
-		// 	pontos[i][1] = 100 + ((i+1) * 20);
-		// 	pontos[i][2] = 150;
-		// 	pontos[i][3] = 150;	
-		// }
-			
 	}
 	
 	// para manter o refreshRate a 60fps => 1000ms/16 = 62
@@ -129,6 +168,7 @@ public class Canvas extends JPanel implements Runnable {
 		/**
 		 * Vai buscar no socket o estado do jogo e manter atualizado, assim como pegar mensagens
 		 */
+		criarTabuleiro();
 
 		// fila.atualizar();
 		
@@ -155,14 +195,24 @@ public class Canvas extends JPanel implements Runnable {
 			for (int i = 0; i < 5; i++){			
 				g2d.drawLine(linhas[i][0], linhas[i][1], linhas[i][2], linhas[i][3]);
 			}
+
 			// pinta pontos
+			int offset_borda = (pontos[0][3]/100 * this.ponto_borda_offset); // TODO: fix borda
 			for (int i = 0; i < 7; i++){			
-				// x, y, tam, tam
-				// TODO: tamanho precisa ser calculado
-				g2d.setColor(Color.red);
+				Random gerador = new Random();
+				g2d.setColor(Color.black);
+				g2d.drawOval(pontos[i][0], pontos[i][1], pontos[i][2] + offset_borda, pontos[i][3] + offset_borda);
+				
+				if (gerador.nextInt(2) % 2 == 0){
+					g2d.setColor(Color.white);				
+				}else {
+					g2d.setColor(Color.red);				
+
+				}
+				
+				
 				g2d.fillOval(pontos[i][0], pontos[i][1], pontos[i][2], pontos[i][3]);
 				g2d.setColor(Color.black);
-
 			}	
 		}	
 	}

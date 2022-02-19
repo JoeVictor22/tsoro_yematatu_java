@@ -59,9 +59,9 @@ public class Janela implements Runnable, ActionListener {
 		janela = new JFrame("Cliente");
 		janela.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		janela.setSize(w,h+160);
-		janela.setResizable(false);
+		janela.setResizable(true);
 		janela.setLayout(new BorderLayout());
-		
+
 		// acoes para os butoes
 		// beboButton.addActionListener(this);
  
@@ -85,7 +85,7 @@ public class Janela implements Runnable, ActionListener {
 		System.setOut(new PrintStream(consoleStream));
 		
 		// criacao de instancia principal do jogo
-		jogo = new Canvas(w, h, this);
+		jogo = new Canvas(this);
 		
 		janela.add(jogo, BorderLayout.CENTER);
 		janela.add(inputUser, BorderLayout.PAGE_START);
@@ -114,6 +114,15 @@ public class Janela implements Runnable, ActionListener {
         // }
 	}
 	
+	
+	public int getAlturaAtual() {
+		return this.janela.getHeight();
+	}
+
+	public int getLarguraAtual() {
+		return this.janela.getWidth();
+	}
+
 
 	public void run() {
 	}
