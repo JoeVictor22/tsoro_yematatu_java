@@ -16,7 +16,6 @@ import java.awt.event.ActionListener;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Semaphore;
 
 public class Janela implements Runnable, ActionListener {
 	List<String> threadInfo_bebendo = new ArrayList<>();

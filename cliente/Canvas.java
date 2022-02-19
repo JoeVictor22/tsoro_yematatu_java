@@ -41,7 +41,6 @@ public class Canvas extends JPanel implements Runnable {
 		//Load background
 		try {
 			cenario = ImageIO.read(new File(scenePath));
-			cenario = resize(cenario, h, w);
 		}
 		catch(IOException e) {
 			Logger.getLogger(Canvas.class.getName()).log(Level.SEVERE, null, e);
@@ -169,15 +168,6 @@ public class Canvas extends JPanel implements Runnable {
 		 * Vai buscar no socket o estado do jogo e manter atualizado, assim como pegar mensagens
 		 */
 		criarTabuleiro();
-
-		// fila.atualizar();
-		
-		// for(int i = 0; i < quantidadeDeAtores; i++) {
-		// 	if(controladores[i] != null) {
-		// 		controladores[i].atualizar();
-		// 		casas[i].atualizar();
-		// 	}
-		// }
 	}
 	
 	// desenha os componentes na tela
@@ -217,16 +207,6 @@ public class Canvas extends JPanel implements Runnable {
 		}	
 	}
 	
-	// redimensiona imagem
-	public static BufferedImage resize(BufferedImage img, int W, int H) { 
-	    Image temp = img.getScaledInstance(W, H, Image.SCALE_SMOOTH);
-	    BufferedImage novaImagem = new BufferedImage(W, H, BufferedImage.TYPE_INT_ARGB);
-	    Graphics2D g2d = novaImagem.createGraphics();
-	    g2d.drawImage(temp, 0, 0, null);
-	    g2d.dispose();
-	    return novaImagem;
-	}  
-
 	public void setJogando(boolean jogando) {
 		this.jogando = jogando;
 	}
